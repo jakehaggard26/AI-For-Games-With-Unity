@@ -5,12 +5,34 @@ using UnityEngine;
 public class AgentController : MonoBehaviour
 {
     #region  Variables
+    [SerializeField]
+    private GameObject target;
+    
+    [SerializeField]
+    private float maxSpeed = 7.5f;
     private Rigidbody rb;
     private Vector3 velocity;
     private Vector3 angularVelocity;
+
+    private enum KinematicMovement
+    {
+        KinematicSeek,
+        KinematicFlee,
+        KinematicArrive,
+        KinematicWander,
+        None
+    }
+    [SerializeField]
+    private KinematicMovement currentMovement = KinematicMovement.None;
+    private SteeringOutput steering;
     #endregion
     
     #region  Properties
+    public float MaxSpeed
+    {
+        get => this.maxSpeed;
+        set => this.maxSpeed = value;
+    }
     public Rigidbody Rb
     {
         get => this.rb;
@@ -26,6 +48,12 @@ public class AgentController : MonoBehaviour
         get => this.angularVelocity;
         set => this.angularVelocity = value;
     }
+
+    public GameObject Target
+    {
+        get => this.target;
+        set => this.target = value;
+    }
     #endregion
 
     #region Unity Methods
@@ -37,6 +65,8 @@ public class AgentController : MonoBehaviour
         // Set the initial velocity and angular velocity to pre-set values (can be modified in the Inspector)
         this.rb.linearVelocity = this.velocity;
         this.rb.angularVelocity = this.angularVelocity;
+
+        steering = new SteeringOutput();
     }
 
     // Update is called once per frame
@@ -46,6 +76,21 @@ public class AgentController : MonoBehaviour
     }
     void FixedUpdate()
     {
+        // Get steering output
+        switch (this.currentMovement)
+        {
+            case KinematicMovement.KinematicSeek:
+                this.steering = new KinematicSeek(this, this.target).getSteering();
+                break;
+            default:
+                break;
+        }
+
+        // Honestly, this is unnecessary (see next step)
+        this.velocity = this.steering.linear;
+        this.angularVelocity = this.steering.angular;
+
+        // Update the Rigidbody's velocity and angular velocity based on the steering output
         this.rb.linearVelocity = this.velocity;
         this.rb.angularVelocity = this.angularVelocity;
     }
