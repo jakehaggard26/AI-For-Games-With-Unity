@@ -82,17 +82,22 @@ public class AgentController : MonoBehaviour
             case KinematicMovement.KinematicSeek:
                 this.steering = new KinematicSeek(this, this.target).getSteering();
                 break;
+            case KinematicMovement.KinematicFlee:
+                this.steering = new KinematicFlee(this, this.target).getSteering();
+                break;
             default:
                 break;
         }
 
         // Honestly, this is unnecessary (see next step)
-        this.velocity = this.steering.linear;
-        this.angularVelocity = this.steering.angular;
+        // this.velocity = this.steering.linear;
+        // this.angularVelocity = this.steering.angular;
 
         // Update the Rigidbody's velocity and angular velocity based on the steering output
-        this.rb.linearVelocity = this.velocity;
-        this.rb.angularVelocity = this.angularVelocity;
+        // this.rb.linearVelocity = this.velocity;
+        // this.rb.angularVelocity = this.angularVelocity;
+        this.rb.linearVelocity = this.steering.linear;
+        this.rb.angularVelocity = this.steering.angular;
     }
     #endregion
 }

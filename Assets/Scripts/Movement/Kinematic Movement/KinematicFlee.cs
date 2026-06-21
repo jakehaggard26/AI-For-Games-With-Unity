@@ -1,22 +1,22 @@
 using UnityEngine;
 
-public class KinematicSeek: IKinematicMovement
+public class KinematicFlee: IKinematicMovement
 {
     #region Variables
     public AgentController agent;
     public GameObject target;
 
-    private string name = "Kinematic Seek";
+    private string name = "Kinematic Flee";
     #endregion
 
     #region Constructors
-    public KinematicSeek(AgentController agent, GameObject target)
+    public KinematicFlee(AgentController agent, GameObject target)
     {
         this.agent = agent;
         this.target = target;
     }
 
-    public KinematicSeek(AgentController agent)
+    public KinematicFlee(AgentController agent)
     {
         this.agent = agent;
         this.target = null;
@@ -35,8 +35,8 @@ public class KinematicSeek: IKinematicMovement
     {
         SteeringOutput steering = new SteeringOutput();
 
-        // Get direction towards the target
-        steering.linear = this.target.transform.position - this.agent.transform.position;
+        // Get direction away from the target
+        steering.linear = this.agent.transform.position - this.target.transform.position;
 
         // Move full speed in this direction
         steering.linear.Normalize();
